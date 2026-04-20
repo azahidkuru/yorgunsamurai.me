@@ -1,70 +1,47 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 ---
-<Layout title="Pangram Oluşturucu">
-  <main>
-    <h1>Pangram Oluşturucu</h1>
-    <<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <title>Pangram İstasyonu</title>
-    <style>
-        body { background: #1a1a1a; color: #e0e0e0; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .container { width: 90%; max-width: 600px; text-align: center; }
-        .alphabet { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 30px; }
-        .letter { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid #444; font-weight: bold; background: #333; color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.2); transition: all 0.3s ease; }
-        .letter.off { background: #111; color: #444; border-color: #222; box-shadow: none; text-shadow: none; opacity: 0.3; }
-        textarea { width: 100%; height: 100px; background: #222; color: #fff; border: 2px solid #444; border-radius: 8px; padding: 15px; font-size: 18px; outline: none; resize: none; transition: border-color 0.3s; }
-        textarea:focus { border-color: #007bff; }
-        .stats { margin-top: 15px; font-size: 14px; color: #888; }
-    </style>
-</head>
-<body>
 
-<div class="container">
-    <div class="alphabet" id="alphabet"></div>
-    <textarea id="input" placeholder="Pangramınızı yazmaya başlayın..."></textarea>
-    <div class="stats" id="stats">Kalan harf: 29</div>
-</div>
+<Layout title="Pangram Oluşturucu | Yorgun Samuray">
+  <Header />
+  <main id="main-content" class="mx-auto max-w-3xl px-4 pb-12">
+    <section class="mt-8">
+      <h1 class="text-2xl font-semibold sm:text-3xl">Pangram Oluşturucu</h1>
+      <p class="mt-2 italic">Alfabenin tüm harflerini içeren o kusursuz cümleyi ara.</p>
+      
+      <div class="mt-8 space-y-4">
+        <textarea 
+          id="pangram-input" 
+          class="w-full rounded border border-skin-line bg-skin-fill p-4 focus:outline-none" 
+          rows="5" 
+          placeholder="Cümlenizi buraya yazın..."></textarea>
+        
+        <div id="result" class="rounded bg-skin-card p-4 text-sm shadow-sm">
+          Harf kullanımını kontrol etmek için yazmaya başlayın.
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
 
 <script>
-    const letters = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ".split("");
-    const alphabetDiv = document.getElementById('alphabet');
-    const input = document.getElementById('input');
-    const stats = document.getElementById('stats');
+  const input = document.querySelector('#pangram-input');
+  const result = document.querySelector('#result');
+  const alphabet = "abcçdefgğhıijklmnoöprsştuüvyz".split("");
 
-    // Alfabeyi oluştur
-    letters.forEach(char => {
-        const span = document.createElement('span');
-        span.textContent = char;
-        span.className = 'letter';
-        span.id = 'L-' + char;
-        alphabetDiv.appendChild(span);
-    });
-
-    input.addEventListener('input', () => {
-        const text = input.value.toUpperCase();
-        let foundCount = 0;
-
-        letters.forEach(char => {
-            const el = document.getElementById('L-' + char);
-            if (text.includes(char)) {
-                el.classList.add('off');
-                foundCount++;
-            } else {
-                el.classList.remove('off');
-            }
-        });
-
-        stats.textContent = `Kalan harf: ${29 - foundCount}`;
-        
-        if (foundCount === 29) {
-            stats.innerHTML = "<b style='color: #4caf50;'>Tebrikler! Mükemmel bir pangram.</b>";
-        }
-    });
+  input?.addEventListener('input', (e) => {
+    const text = e.target.value.toLowerCase();
+    const missing = alphabet.filter(char => !text.includes(char));
+    
+    if (text.length === 0) {
+      result.innerHTML = "Harf kullanımını kontrol etmek için yazmaya başlayın.";
+    } else if (missing.length === 0) {
+      result.innerHTML = "<span style='color: #4ade80;'>Tebrikler! Bu bir pangram.</span>";
+    } else {
+      result.innerHTML = `Eksik harfler: <b style='letter-spacing: 2px;'>${missing.join(" ").toUpperCase()}</b>`;
+    }
+  });
 </script>
-
-</body>
-</html>
-  </main>
-</Layout>
